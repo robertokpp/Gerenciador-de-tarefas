@@ -1,9 +1,8 @@
 import { app } from "@/app";
-import { AppError } from "./utils/AppError";
+require('dotenv').config();
 
-const PORT = 3333;
+const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} `, new AppError("Teste",202));
-  
+  console.log(`Server running on port ${PORT} `);
 });

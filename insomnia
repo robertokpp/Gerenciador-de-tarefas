@@ -1,0 +1,57 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: Gerenciador-de-tarefas
+meta:
+  id: wrk_32b29b8dc8714edf886ae033bb3183c4
+  created: 1773422039734
+  modified: 1773422039734
+  description: ""
+collection:
+  - name: Users
+    meta:
+      id: fld_afd2bb518baa4139ad2db59d91fc48b1
+      created: 1773422048160
+      modified: 1773422157245
+      sortKey: -1773422048160
+      description: ""
+    children:
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}"
+        name: Create
+        meta:
+          id: req_fc9031a4dece4d688263c17eac315c26
+          created: 1773422176041
+          modified: 1773422197411
+          isPrivate: false
+          description: ""
+          sortKey: -1773422176041
+        method: POST
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    environment:
+      RESOURCE: users
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_5c4efad67383ba9ab7cb389241b3fcd2fa596ab4
+    created: 1773422039749
+    modified: 1773422039749
+environments:
+  name: Base Environment
+  meta:
+    id: env_5c4efad67383ba9ab7cb389241b3fcd2fa596ab4
+    created: 1773422039744
+    modified: 1773422128619
+    isPrivate: false
+  data:
+    BASE_URL: localhost:3333
