@@ -1,3 +1,4 @@
+// npx prisma init --datasource-provider postgresql
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
