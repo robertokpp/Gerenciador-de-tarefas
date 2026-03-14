@@ -13,6 +13,18 @@ enum UserRole {
   member
 }
 
+enum Status {
+  pending
+  in_progress
+  completed
+}
+
+enum Priority {
+  high
+  medium
+  low
+}
+
 model User {
   id       Int    @id @default(autoincrement())
   name     String @db.VarChar(100)
@@ -21,27 +33,75 @@ model User {
 
   role UserRole @default(member)
 
+  // teammembers  TeamMembers[]
+  // tasks        Tasks[]
+  // tasksHistory TasksHistory[]
+
   createdAt DateTime  @default(now()) @map("created_at")
   updateAt  DateTime? @updatedAt @map("update_at")
 
   @@map("users")
 }
 
-model teams {
-  id          Int    @id @default(autoincrement())
-  name        String @db.VarChar(100)
+model Teams {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(100)
   description String
-
-  createdAt DateTime  @default(now()) @map("created_at")
-  updateAt  DateTime? @updatedAt @map("update_at")
+  // teammembers TeamMembers[]
+  // tasks       Tasks[]
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updateAt    DateTime? @updatedAt @map("update_at")
 
   @@map("teams")
 }
 
-model teamMembers {
-  id Int @id @default(autoincrement())
+model TeamMembers {
+  id     Int @id @default(autoincrement())
+  userId Int @map("user_id")
+  teamId Int @map("team_id")
+
+  // user  User  @relation(fields: [userId], references: [id])
+  // teams Teams @relation(fields: [teamId], references: [id])
 
   createAt DateTime @default(now()) @map("create_at")
 
   @@map("team_members")
+}
+
+model Tasks {
+  id          Int    @id @default(autoincrement())
+  title       String @db.VarChar(200)
+  description String
+
+  status   Status   @default(pending)
+  priority Priority
+
+  assignedTo Int @map("assigned_to")
+  teamId     Int @map("team_id")
+
+  // user User  @relation(fields: [assignedTo], references: [id])
+  // team Teams @relation(fields: [teamId], references: [id])
+
+  // tasksHistory TasksHistory[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updateAt  DateTime @updatedAt @map("update_at")
+
+  @@map("tasks")
+}
+
+model TasksHistory {
+  id        Int @id @default(autoincrement())
+  taskId    Int @map("task_id")
+  changedId Int @map("changed_id")
+
+  // tasks Tasks @relation(fields: [taskId], references: [id])
+  // user  User  @relation(fields: [changedId], references: [id])
+
+  oldStatus Status @map("old_status")
+  newStatus Status @map("new_status")
+
+  changedAt DateTime @updatedAt @map("changed_at")
+
+  @@map("tasks_history")
 }
