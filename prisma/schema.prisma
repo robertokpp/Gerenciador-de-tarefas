@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  admin
+  member
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(100)
+  email    String @unique @db.VarChar(150)
+  password String @db.VarChar(255)
+
+  role UserRole @default(member)
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updateAt  DateTime? @updatedAt @map("update_at")
+
+  @@map("users")
+}
+
+model teams {
+  id          Int    @id @default(autoincrement())
+  name        String @db.VarChar(100)
+  description String
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updateAt  DateTime? @updatedAt @map("update_at")
+
+  @@map("teams")
+}
+
+model teamMembers {
+  id Int @id @default(autoincrement())
+
+  createAt DateTime @default(now()) @map("create_at")
+
+  @@map("team_members")
+}
