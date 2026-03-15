@@ -1,18 +1,20 @@
 import { Request, Response } from "express";
-import {z} from "zod"
+import { z } from "zod";
+import { hash } from "bcrypt";
 
 class UserController {
-  create(request: Request, response: Response) {
-    
+  async create(request: Request, response: Response) {
     const bodySchema = z.object({
-      name: z.string(),
+      name: z.string().trim(),
       email: z.email(),
       password: z.string().min(6),
-    })
+    });
 
-    const  { name, email , password } = bodySchema.parse(request.body)
+    const { name, email, password } = bodySchema.parse(request.body);
 
-    return response.json({ message: "ok" });
+    const hashPassword = await hash(password, 8);
+
+    return response.json({ message: "ok", hashPassword });
   }
 }
 
