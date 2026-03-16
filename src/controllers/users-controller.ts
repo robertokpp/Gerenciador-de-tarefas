@@ -22,7 +22,6 @@ class UserController {
       throw new AppError("Email ja cadastrado");
     }
 
-
     await prisma.user.create({
       data: {
         name: name,
@@ -33,7 +32,7 @@ class UserController {
 
     return response.json({ message: "ok" });
   }
-  
+
 
   async index(request: Request, response: Response) {
     const user = await prisma.user.findMany();
