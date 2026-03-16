@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { z } from "zod";
 import { hash } from "bcrypt";
 import { prisma } from "@/database/prisma";
+import { AppError } from "@/utils/AppError";
 
 class UserController {
   async create(request: Request, response: Response) {
@@ -12,23 +13,31 @@ class UserController {
     });
 
     const { name, email, password } = bodySchema.parse(request.body);
-
     const hashPassword = await hash(password, 8);
+    const user = await prisma.user.findFirst({
+      where: { email },
+    });
 
-    const user = await prisma.user.create({
+    if (user) {
+      throw new AppError("Email ja cadastrado");
+    }
+
+
+    await prisma.user.create({
       data: {
         name: name,
         email: email,
-        password: hashPassword
-      }
-    })
+        password: hashPassword,
+      },
+    });
 
     return response.json({ message: "ok" });
   }
+  
 
-  async index(request: Request, response: Response){
-     const user = await prisma.user.findMany()
-     return response.json(user)
+  async index(request: Request, response: Response) {
+    const user = await prisma.user.findMany();
+    return response.json(user);
   }
 }
 
