@@ -5,3 +5,6 @@ class SessionsController {
     return response.json("ok");
   }
 }
+
+
+export { SessionsController }
