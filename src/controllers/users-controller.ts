@@ -12,14 +12,17 @@ class UserController {
       password: z.string().min(6),
     });
 
+
+
     const { name, email, password } = bodySchema.parse(request.body);
     const hashPassword = await hash(password, 8);
-    const user = await prisma.user.findFirst({
+
+    const emailAlreadyRegistered = await prisma.user.findFirst({
       where: { email },
     });
 
-    if (user) {
-      throw new AppError("Email ja cadastrado");
+    if (emailAlreadyRegistered) {
+      throw new AppError("This email has already been registered.");
     }
 
     await prisma.user.create({
@@ -30,7 +33,7 @@ class UserController {
       },
     });
 
-    return response.json({ message: "ok" });
+    return response.status(201).json({ message: "ok" });
   }
 
 
