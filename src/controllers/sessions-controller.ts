@@ -38,6 +38,7 @@ class SessionsController {
     
     return response.json({ token });
   }
+  
 }
 
 export { SessionsController };
