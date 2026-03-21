@@ -13,7 +13,6 @@ class UserController {
     });
 
 
-
     const { name, email, password } = bodySchema.parse(request.body);
     const hashPassword = await hash(password, 8);
 
