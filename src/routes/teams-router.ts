@@ -10,4 +10,7 @@ teamsRouter.use(ensureAuthenticated, verifyUserAuthorization(["admin"]))
 
 teamsRouter.post("/", teamsController.create);
 teamsRouter.get("/", teamsController.index);
+teamsRouter.delete("/", teamsController.remove)
+teamsRouter.patch("/:id", teamsController.update)
+
 export { teamsRouter };

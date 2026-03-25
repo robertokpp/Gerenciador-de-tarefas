@@ -12,6 +12,7 @@ class TasksController {
     })
 
     const { title, description , priority, teamId } = bodySchema.parse(request.body)
+    
     const userId = Number(request.user?.id)
 
     if (!userId) {
