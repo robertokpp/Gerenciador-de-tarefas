@@ -6,8 +6,10 @@ import { verifyUserAuthorization } from "@/middlewares/verifyUserAuthorization";
 const teamsMembersRouter = Router();
 const teamsMembersController = new TeamsMembersController();
 
-teamsMembersRouter.use(ensureAuthenticated, verifyUserAuthorization(["admin"]))
+teamsMembersRouter.use(ensureAuthenticated, verifyUserAuthorization(["admin"]));
 
-teamsMembersRouter.post("/", teamsMembersController.create)
-teamsMembersRouter.delete("/", teamsMembersController.remove)
+teamsMembersRouter.post("/", teamsMembersController.create);
+teamsMembersRouter.get("/", teamsMembersController.index)
+teamsMembersRouter.delete("/:id", teamsMembersController.remove);
 
+export { teamsMembersRouter };

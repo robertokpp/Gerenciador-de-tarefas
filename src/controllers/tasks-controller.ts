@@ -29,6 +29,13 @@ class TasksController {
     })
     return response.status(201).json(task);
   }
+
+  async index(request: Request, response: Response){
+
+    const userId = Number(request.user?.id)
+
+    return response.json(userId)
+  }
 }
 
 export { TasksController };
