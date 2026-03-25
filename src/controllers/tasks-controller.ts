@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import {z} from "zod"
+import { z } from "zod";
 import { prisma } from "@/database/prisma";
 
 class TasksController {
@@ -7,15 +7,22 @@ class TasksController {
     const bodySchema = z.object({
       title: z.string(),
       description: z.string(),
-      priority: z.enum(["high","medium", "low"]),
+      priority: z.enum(["high", "medium", "low"]),
       teamId: z.number().int().positive(),
-    })
+    });
 
-    const { title, description , priority, teamId } = bodySchema.parse(request.body)
-    const userId = Number(request.user?.id)
+    const { title, description, priority, teamId } = bodySchema.parse(
+      request.body,
+    );
+
+    const userId = Number(request.user?.id);
+
+    return response.json(userId);
 
     if (!userId) {
-      return response.status(401).json({ message: "Invalid authenticated user" })
+      return response
+        .status(401)
+        .json({ message: "Invalid authenticated user" });
     }
 
     const task = await prisma.tasks.create({
@@ -25,8 +32,8 @@ class TasksController {
         priority: priority,
         assignedTo: userId,
         teamId,
-      }
-    })
+      },
+    });
     return response.status(201).json(task);
   }
 
