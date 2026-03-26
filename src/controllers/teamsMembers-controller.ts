@@ -12,9 +12,16 @@ class TeamsMembersController {
 
     const { userId, teamId } = bodySchema.parse(request.body);
 
-    if (userId) {
-      try {
-      } catch (error) {}
+    const userCheck = await prisma.teamMembers.findFirst({
+      where: { userId },
+    });
+
+    const teamCheck = await prisma.teamMembers.findFirst({
+      where: { teamId },
+    });
+
+    if (userCheck && teamCheck) {
+      throw new AppError("Usuário ja atribuído a equipe", 400);
     }
 
     const teamMembers = await prisma.teamMembers.create({
@@ -43,7 +50,7 @@ class TeamsMembersController {
       where: { id },
     });
 
-    return response.status(200);
+    return response.status(200).json();
   }
 }
 

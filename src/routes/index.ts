@@ -10,6 +10,6 @@ router.use("/users", userRoutes);
 router.use("/sessions", sessionsRouter);
 router.use("/tasks", tasksRouter);
 router.use("/teams", teamsRouter);
-router.use("/members", teamsMembersRouter);
+router.use("/team-member", teamsMembersRouter);
 
 export { router };

@@ -17,8 +17,6 @@ class TasksController {
 
     const userId = Number(request.user?.id);
 
-    return response.json(userId);
-
     if (!userId) {
       return response
         .status(401)
@@ -31,18 +29,60 @@ class TasksController {
         description: description,
         priority: priority,
         assignedTo: userId,
-        teamId,
+        teamId: teamId,
       },
     });
-    return response.status(201).json(task);
+    return response.status(201).json();
   }
 
-  async index(request: Request, response: Response){
+  async index(request: Request, response: Response) {
+    const tasks = await prisma.tasks.findMany();
+    return response.json(tasks);
+  }
 
-    const userId = Number(request.user?.id)
+  async update(request: Request, response: Response) {
+    const paramsSchema = z.object({
+      id: z.coerce.number().int().positive(),
+    });
 
-    return response.json(userId)
+    const bodySchema = z.object({
+      title: z.string(),
+      description: z.string(),
+      priority: z.enum(["high", "medium", "low"]),
+      teamId: z.number().int().positive(),
+    });
+    const { id } = paramsSchema.parse(request.params);
+    const { title, description, priority, teamId } = bodySchema.parse(
+      request.body,
+    );
+
+    const task = await prisma.tasks.update({
+      where: { id },
+      data: {
+        title: title,
+        description: description,
+        priority: priority,
+        teamId: teamId
+      },
+    });
+
+    return response.json(task);
+  }
+
+  async remove(request: Request, response: Response){ 
+    const paramsSchema = z.object({
+      id: z.coerce.number().int().positive()
+    })
+
+    const { id } = paramsSchema.parse(request.params)
+
+    await prisma.tasks.delete({
+      where: { id }
+    })
+
+    return response.json()
   }
 }
+
 
 export { TasksController };

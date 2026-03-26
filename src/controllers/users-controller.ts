@@ -32,14 +32,16 @@ class UserController {
       },
     });
 
-    return response.status(201).json({ message: "ok" });
+    return response.status(201).json();
   }
 
 
   async index(request: Request, response: Response) {
     const user = await prisma.user.findMany();
+
     return response.json(user);
   }
+  
 }
 
 export { UserController };
