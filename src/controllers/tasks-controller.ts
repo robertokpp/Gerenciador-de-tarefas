@@ -37,7 +37,7 @@ class TasksController {
 
   async index(request: Request, response: Response) {
     const tasks = await prisma.tasks.findMany({
-      orderBy: { id: "asc"}
+      orderBy: { id: "asc" },
     });
     return response.json(tasks);
   }
@@ -64,28 +64,26 @@ class TasksController {
         title: title,
         description: description,
         priority: priority,
-        teamId: teamId
+        teamId: teamId,
       },
     });
 
     return response.json(task);
   }
 
-  async remove(request: Request, response: Response){ 
+  async remove(request: Request, response: Response) {
     const paramsSchema = z.object({
-      id: z.coerce.number().int().positive()
-    })
+      id: z.coerce.number().int().positive(),
+    });
 
-    const { id } = paramsSchema.parse(request.params)
+    const { id } = paramsSchema.parse(request.params);
 
     await prisma.tasks.delete({
-      where: { id }
-    })
+      where: { id },
+    });
 
-    return response.json()
+    return response.json();
   }
-
 }
-
 
 export { TasksController };

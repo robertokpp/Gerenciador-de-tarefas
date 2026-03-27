@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "@/database/prisma";
 import { z } from "zod";
-import { Status } from "../../generated/prisma/enums";
 
 class TasksStatusController {
   async index(request: Request, response: Response) {
