@@ -36,7 +36,9 @@ class TasksController {
   }
 
   async index(request: Request, response: Response) {
-    const tasks = await prisma.tasks.findMany();
+    const tasks = await prisma.tasks.findMany({
+      orderBy: { id: "asc"}
+    });
     return response.json(tasks);
   }
 
@@ -82,6 +84,7 @@ class TasksController {
 
     return response.json()
   }
+
 }
 
 
