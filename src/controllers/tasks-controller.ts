@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { z } from "zod";
+import { number, z } from "zod";
 import { prisma } from "@/database/prisma";
 
 class TasksController {
@@ -36,10 +36,22 @@ class TasksController {
   }
 
   async index(request: Request, response: Response) {
-    const tasks = await prisma.tasks.findMany({
-      orderBy: { id: "asc" },
-    });
-    return response.json(tasks);
+    const userRole = request.user?.role;
+
+    if (userRole === "admin") {
+      const tasks = await prisma.tasks.findMany({
+        orderBy: { id: "asc" },
+      });
+      return response.json(tasks);
+    } else {
+      const userId = Number(request.user?.id);
+
+      const tasks = await prisma.tasks.findMany({
+        where: { assignedTo: userId },
+        orderBy: { id: "asc" },
+      });
+      return response.json(tasks);
+    }
   }
 
   async update(request: Request, response: Response) {

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { number, z } from "zod";
 import { prisma } from "@/database/prisma";
-import { id } from "zod/locales";
+
 
 class TeamsController {
   async create(request: Request, response: Response) {
