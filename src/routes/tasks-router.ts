@@ -4,7 +4,7 @@ import { TasksStatusController } from "@/controllers/tasksStatus-controller";
 import { ensureAuthenticated } from "@/middlewares/ensure-authenticated";
 import { TasksPriorityController } from "@/controllers/tasksPriority-controller";
 import { TasksAssignedController  } from "@/controllers/tasksAssigned-controller";
-
+import { verifyUserAuthorization } from "@/middlewares/verifyUserAuthorization";
 
 
 const tasksRouter = Router();
@@ -15,10 +15,10 @@ const tasksAssignedController  = new TasksAssignedController()
 
 tasksRouter.use(ensureAuthenticated);
 
-tasksRouter.post("/", tasksController.create);
+tasksRouter.post("/",verifyUserAuthorization(["admin"]), tasksController.create);
 tasksRouter.get("/", tasksController.index);
-tasksRouter.patch("/:id", tasksController.update);
-tasksRouter.delete("/:id", tasksController.remove);
+tasksRouter.patch("/:id",verifyUserAuthorization(["admin"]), tasksController.update);
+tasksRouter.delete("/:id",verifyUserAuthorization(["admin"]),tasksController.remove);
 
 tasksRouter.get("/status", tasksStatusController.index);
 tasksRouter.patch("/:id/status", tasksStatusController.update);

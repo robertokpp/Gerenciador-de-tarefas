@@ -8,39 +8,63 @@ class TasksStatusController {
       status: z.enum(["pending", "in_progress", "completed"]),
     });
 
-    const { status } = bodySchema.parse(request.body);
+    const userRole = request.user?.role;
 
-    const taskStatus = await prisma.tasks.findMany({
-      where: {
-        status,
-      },
-    });
+    if (userRole === "admin") {
+      const { status } = bodySchema.parse(request.body);
+      const taskStatus = await prisma.tasks.findMany({
+        where: {
+          status,
+        },
+      });
+      return response.json(taskStatus);
+    } else if (userRole === "member") {
+      const userId = Number(request.user?.id);
 
-    return response.json(taskStatus);
+      const { status } = bodySchema.parse(request.body);
+      const taskStatus = await prisma.tasks.findMany({
+        where: {
+          assignedTo: userId,
+          status,
+        },
+      });
+
+      return response.json(taskStatus);
+    }
   }
 
-  async update(request: Request, response: Response){
+  async update(request: Request, response: Response) {
     const paramsSchema = z.object({
-      id: z.coerce.number().int().positive()
-    })
+      id: z.coerce.number().int().positive(),
+    });
 
     const bodySchema = z.object({
       status: z.enum(["pending", "in_progress", "completed"]),
-    })
+    });
 
-    const { id } = paramsSchema.parse(request.params)
-    const { status } = bodySchema.parse(request.body)
+    const userRole = request.user?.role;
+    const userId = Number(request.user?.id);
 
-    await prisma.tasks.update({
-      where:{
-        id
-      },
-      data :{
-        status
-      }
-    })
+    const assignedUser = await prisma.tasks.count({
+      where: { assignedTo: userId },
+    });
 
-    return response.json()
+    //teste de verificação
+    if (userRole === "admin" || assignedUser > 0) {
+      const { id } = paramsSchema.parse(request.params);
+      const { status } = bodySchema.parse(request.body);
+
+      await prisma.tasks.update({
+        where: {
+          id,
+        },
+        data: {
+          status,
+        },
+      });
+    }
+
+    return response.json();
   }
 }
 

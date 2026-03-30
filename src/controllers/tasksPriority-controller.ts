@@ -21,7 +21,26 @@ class TasksPriorityController {
 
     return response.status(200).json(taskPriority);
   }
+
+  async update(request: Request, response: Response) {
+    const paramsSchema = z.object({
+      id: z.coerce.number().int().positive(),
+    });
+
+    const bodySchema = z.object({
+      priority: z.enum(["high", "medium", "low"]),
+    });
+
+    const { id } = paramsSchema.parse(request.params);
+    const { priority } = bodySchema.parse(request.body);
+
+    await prisma.tasks.update({
+      where: { id },
+      data: { priority },
+    });
+
+    return response.json();
+  }
 }
 
-
-export { TasksPriorityController }
+export { TasksPriorityController };
