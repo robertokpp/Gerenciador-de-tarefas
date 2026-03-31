@@ -45,6 +45,7 @@ class TasksAssignedController {
 
     return response.status(200).json(taskUpdate);
   }
+
 }
 
 export { TasksAssignedController };
