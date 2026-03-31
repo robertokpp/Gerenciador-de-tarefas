@@ -15,10 +15,10 @@ const tasksAssignedController  = new TasksAssignedController()
 
 tasksRouter.use(ensureAuthenticated, verifyUserAuthorization(["admin"]));
 
-tasksRouter.post("/", tasksController.create);
+tasksRouter.post("/",verifyUserAuthorization(["admin"]), tasksController.create);
 tasksRouter.get("/", tasksController.index);
-tasksRouter.patch("/:id", tasksController.update);
-tasksRouter.delete("/:id", tasksController.remove);
+tasksRouter.patch("/:id",verifyUserAuthorization(["admin"]), tasksController.update);
+tasksRouter.delete("/:id",verifyUserAuthorization(["admin"]),tasksController.remove);
 
 tasksRouter.get("/status", tasksStatusController.index);
 tasksRouter.patch("/:id/status", tasksStatusController.update);
