@@ -8,29 +8,13 @@ class TasksStatusController {
       status: z.enum(["pending", "in_progress", "completed"]),
     });
 
-    const userRole = request.user?.role;
-
-    if (userRole === "admin") {
-      const { status } = bodySchema.parse(request.body);
-      const taskStatus = await prisma.tasks.findMany({
-        where: {
-          status,
-        },
-      });
-      return response.json(taskStatus);
-    } else if (userRole === "member") {
-      const userId = Number(request.user?.id);
-
-      const { status } = bodySchema.parse(request.body);
-      const taskStatus = await prisma.tasks.findMany({
-        where: {
-          assignedTo: userId,
-          status,
-        },
-      });
-
-      return response.json(taskStatus);
-    }
+    const { status } = bodySchema.parse(request.body);
+    const taskStatus = await prisma.tasks.findMany({
+      where: {
+        status,
+      },
+    });
+    return response.json(taskStatus);
   }
 
   async update(request: Request, response: Response) {
@@ -42,27 +26,17 @@ class TasksStatusController {
       status: z.enum(["pending", "in_progress", "completed"]),
     });
 
-    const userRole = request.user?.role;
-    const userId = Number(request.user?.id);
+    const { id } = paramsSchema.parse(request.params);
+    const { status } = bodySchema.parse(request.body);
 
-    const assignedUser = await prisma.tasks.count({
-      where: { assignedTo: userId },
+    await prisma.tasks.update({
+      where: {
+        id,
+      },
+      data: {
+        status,
+      },
     });
-
-    //teste de verificação
-    if (userRole === "admin" || assignedUser > 0) {
-      const { id } = paramsSchema.parse(request.params);
-      const { status } = bodySchema.parse(request.body);
-
-      await prisma.tasks.update({
-        where: {
-          id,
-        },
-        data: {
-          status,
-        },
-      });
-    }
 
     return response.json();
   }

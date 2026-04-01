@@ -5,6 +5,7 @@ import { tasksRouter } from "./tasks-router";
 import { teamsRouter } from "./teams-router";
 import { teamsMembersRouter } from "./teamsMembers-routes";
 import { taskMemberRouter } from "./tasksMember-router";
+import { tasksHistoryRouter } from "./taskshistory-router";
 
 const router = Router();
 
@@ -13,6 +14,7 @@ router.use("/sessions", sessionsRouter);
 router.use("/tasks", tasksRouter);
 router.use("/teams", teamsRouter);
 router.use("/team-member", teamsMembersRouter);
-router.use("/task_member", taskMemberRouter)
+router.use("/task-member", taskMemberRouter);
+router.use("/task-history", tasksHistoryRouter);
 
 export { router };

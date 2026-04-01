@@ -7,7 +7,7 @@ import { verifyUserAuthorization } from "@/middlewares/verifyUserAuthorization";
 const taskMemberRouter = Router();
 const taskMemberController = new TaskMemberController();
 
-taskMemberRouter.use(ensureAuthenticated, verifyUserAuthorization(["member"]))
+taskMemberRouter.use(ensureAuthenticated, verifyUserAuthorization(["member", "admin"]))
 taskMemberRouter.get("/", taskMemberController.index)
 
 export { taskMemberRouter }
