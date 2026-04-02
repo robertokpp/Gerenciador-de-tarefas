@@ -43,7 +43,9 @@ class TasksController {
         orderBy: { id: "asc" },
       });
       return response.json(tasks);
-    } else if(userRole === "member"){
+    }
+    
+    if(userRole === "member"){
       const userId = Number(request.user?.id);
 
       const tasks = await prisma.tasks.findMany({
