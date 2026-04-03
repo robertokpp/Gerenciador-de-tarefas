@@ -1,68 +1,50 @@
 import { Request, Response } from "express";
 import { prisma } from "@/database/prisma";
 import { z } from "zod";
-import { AppError } from "@/utils/AppError";
 
 class TasksHistoryController {
   async create(request: Request, response: Response) {
     const bodySchema = z.object({
-      task_id: z.number(),
+      taskId: z.number().int().positive(),
       newStatus: z.string(),
     });
 
     const user = Number(request.user?.id);
-
-    const { task_id, newStatus } = bodySchema.parse(request.body);
-    const OldTaskHistory = await prisma.tasksHistory.findFirst({
-      where: { taskId: task_id },
-    });
-
-    const oldStatus = OldTaskHistory?.newStatus ?? "";
-
-    if (oldStatus) {
-      throw new AppError("Unauthorized action");
-    }
-
-    const taskHistory = await prisma.tasksHistory.create({
-      data: {
-        taskId: task_id,
-        changedId: user,
-        oldStatus: oldStatus,
-        newStatus,
-      },
-    });
-
-    return response.json(taskHistory);
-  }
-
-  async update(request: Request, response: Response) {
-    const bodySchema = z.object({
-      newStatus: z.string(),
-    });
-
-    const paramsSchema = z.object({
-      id: z.coerce.number().int().positive(),
-    });
-    const user = Number(request.user?.id);
-
-    const { id } = paramsSchema.parse(request.params)
+    const { taskId } = bodySchema.parse(request.body);
     const { newStatus } = bodySchema.parse(request.body);
 
-    const OldTaskHistory = await prisma.tasksHistory.findFirst({
-      where: { id: id },
+    const lastTaskHistory = await prisma.tasksHistory.findFirst({
+      where: { taskId },
+      orderBy: { id: "desc" },
     });
 
-    const oldStatus = OldTaskHistory?.newStatus ?? "";
+    if (lastTaskHistory) {
+      const oldStatus = lastTaskHistory.newStatus;
+      const taskHistory = await prisma.tasksHistory.create({
+        data: {
+          taskId,
+          changedId: user,
+          oldStatus: oldStatus,
+          newStatus,
+        },
+      });
+      return response.json(taskHistory);
+    }
 
-    const taskHistory = await prisma.tasksHistory.update({
-      where: {id},
+    const task = await prisma.tasksHistory.create({
       data: {
+        taskId,
         changedId: user,
-        oldStatus,
+        oldStatus: "",
         newStatus,
       },
     });
 
+    return response.json();
+  }
+
+  async index(request: Request, response: Response) {
+    const taskHistory = await prisma.tasksHistory.findMany();
     return response.json(taskHistory);
   }
 }

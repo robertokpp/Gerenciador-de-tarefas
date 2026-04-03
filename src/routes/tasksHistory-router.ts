@@ -9,6 +9,6 @@ const tasksHistoryController = new TasksHistoryController()
 tasksHistoryRouter.use(ensureAuthenticated)
 
 tasksHistoryRouter.post("/", tasksHistoryController.create)
-tasksHistoryRouter.patch("/:id", tasksHistoryController.update)
+tasksHistoryRouter.get("/", tasksHistoryController.index)
 
 export { tasksHistoryRouter}

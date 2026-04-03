@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { number, z } from "zod";
+import { z } from "zod";
 import { prisma } from "@/database/prisma";
 
 class TasksController {
@@ -44,8 +44,8 @@ class TasksController {
       });
       return response.json(tasks);
     }
-    
-    if(userRole === "member"){
+
+    if (userRole === "member") {
       const userId = Number(request.user?.id);
 
       const tasks = await prisma.tasks.findMany({

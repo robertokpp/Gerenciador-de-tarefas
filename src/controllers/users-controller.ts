@@ -12,7 +12,6 @@ class UserController {
       password: z.string().min(6),
     });
 
-
     const { name, email, password } = bodySchema.parse(request.body);
     const hashPassword = await hash(password, 8);
 
@@ -35,13 +34,11 @@ class UserController {
     return response.status(201).json();
   }
 
-
   async index(request: Request, response: Response) {
     const user = await prisma.user.findMany();
 
     return response.json(user);
   }
-  
 }
 
 export { UserController };
