@@ -1,69 +1,184 @@
 # Gerenciador de Tarefas API
 
-API em Node.js + Express + Prisma para gerenciamento de tarefas, equipes e membros.
+API em Node.js + Express + Prisma para gerenciamento de usuários, times, tarefas, membros e histórico de tarefas.
 
 ## Requisitos
 
 - Node.js 20+
 - npm 10+
-- Docker e Docker Compose (recomendado para o banco)
+- Docker e Docker Compose
+- PostgreSQL
 
-## 1) Instalar dependencias
+## Como rodar localmente
 
-Na raiz do projeto, rode:
+1. Instale as dependencies:
 
+```bash
 npm install
+```
 
-## 2) Configurar variaveis de ambiente
+2. Crie um arquivo `.env` na raiz do projeto com estas variáveis:
 
-Crie um arquivo `.env` na raiz com este conteudo:
-
+```env
 PORT=3333
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/taskManager"
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/taskManager?schema=public"
 JWT_SECRET="sua_chave_secreta"
+```
 
-## 3) Subir o banco de dados (Docker)
+3. Suba o banco com Docker:
 
-Rode:
-
+```bash
 docker compose up -d
+```
 
-Isso sobe um PostgreSQL com:
+4. Rode as migrations do Prisma:
 
-- usuario: postgres
-- senha: postgres
-- banco: taskManager
-- porta: 5432
+```bash
+npx prisma migrate dev
+```
 
-## 4) Aplicar migrations do Prisma
+5. Inicie a API:
 
-Rode:
-
-npx prisma migrate dev --name init
-
-## 5) Iniciar o servidor
-
-Rode:
-
+```bash
 npm run dev
+```
 
-Servidor sera iniciado na porta definida em `PORT`.
+A API vai subir em `http://localhost:3333`.
 
-## Fluxo rapido (resumo)
+## Como rodar os testes
 
-1. npm install
-2. criar `.env`
-3. docker compose up -d
-4. npx prisma migrate dev --name init
-5. npm run dev
+Para rodar os testes em modo watch:
 
-## Comandos uteis
+```bash
+npm run test:dev
+```
 
-- Parar containers: docker compose down
-- Ver logs da API (quando estiver rodando): acompanhe o terminal do comando npm run dev
-- Abrir Prisma Studio: npx prisma studio
+## Deploy
 
-## Observacoes
+O projeto ainda nao tem uma URL publica de deploy cadastrada neste repositório.
 
-- O projeto usa validacao de ambiente. Se faltar `DATABASE_URL` ou `JWT_SECRET`, a API nao inicia.
-- Se voce nao quiser Docker, use um PostgreSQL local e ajuste a `DATABASE_URL` no `.env`.
+## Endpoints
+
+### Autenticação
+
+- `POST /sessions`
+  - Faz login e retorna um token JWT.
+  - Body:
+    - `email`
+    - `password`
+
+### Usuários
+
+- `POST /users`
+  - Cria um usuário novo.
+  - Body:
+    - `name`
+    - `email`
+    - `password`
+- `GET /users`
+  - Lista usuários.
+  - Requer autenticação e perfil `admin`.
+
+### Times
+
+- `POST /teams`
+  - Cria um time.
+  - Requer autenticação e perfil `admin`.
+  - Body:
+    - `name`
+    - `description`
+- `GET /teams`
+  - Lista times.
+  - Requer autenticação e perfil `admin`.
+- `PATCH /teams/:id`
+  - Atualiza um time.
+  - Requer autenticação e perfil `admin`.
+  - Body:
+    - `name`
+    - `description`
+- `DELETE /teams`
+  - Remove um time.
+  - Requer autenticação e perfil `admin`.
+  - Body:
+    - `id`
+
+### Membros do time
+
+- `POST /team-member`
+  - Vincula um usuário a um time.
+  - Requer autenticação e perfil `admin`.
+  - Body:
+    - `userId`
+    - `teamId`
+- `GET /team-member`
+  - Lista os vínculos de usuários com times.
+  - Requer autenticação e perfil `admin`.
+- `DELETE /team-member/:id`
+  - Remove um vinculo.
+  - Requer autenticação e perfil `admin`.
+
+### Tarefas
+
+- `POST /tasks`
+  - Cria uma tarefa.
+  - Requer autenticação.
+  - Body:
+    - `title`
+    - `description`
+    - `priority` (`high`, `medium`, `low`)
+    - `teamId`
+  - O campo `assignedTo` vem do usuário autenticado.
+- `GET /tasks`
+  - Lista tarefas.
+  - Admin ve todas.
+  - Member ve apenas as tarefas atribuídas a ele.
+- `PATCH /tasks/:id`
+  - Atualiza uma tarefa.
+  - Requer autenticação e perfil `admin`.
+  - Body:
+    - `title`
+    - `description`
+    - `priority`
+    - `teamId`
+- `DELETE /tasks/:id`
+  - Remove uma tarefa.
+  - Requer autenticação e perfil `admin`.
+- `GET /tasks/status?status=pending|in_progress|completed`
+  - Lista tarefas por status.
+  - Requer autenticação.
+- `PATCH /tasks/:id/status`
+  - Atualiza o status de uma tarefa.
+  - Requer autenticação.
+  - Body:
+    - `status`
+- `GET /tasks/priority?priority=high|medium|low`
+  - Lista tarefas por prioridade.
+  - Requer autenticação.
+- `PATCH /tasks/:id/priority`
+  - Atualiza a prioridade de uma tarefa.
+  - Requer autenticação.
+  - Body:
+    - `priority`
+- `PATCH /tasks/:id/assign`
+  - Atribui a tarefa a outro usuário.
+  - Requer autenticação e perfil `admin`.
+  - Body:
+    - `userId`
+
+### Histórico de tarefas
+
+- `POST /task-history`
+  - Cria um registro de histórico da tarefa.
+  - Requer autenticação.
+  - Body:
+    - `taskId`
+    - `newStatus`
+- `GET /task-history`
+  - Lista o histórico das tarefas.
+  - Requer autenticação.
+
+## Observações
+
+- Se faltar `DATABASE_URL` ou `JWT_SECRET`, a aplicação nao inicia.
+- O banco usado no Docker e `taskManager`.
+- Para testar as rotas protegidas, envie o token no header `Authorization: Bearer <token>`.

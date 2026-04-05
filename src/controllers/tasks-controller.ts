@@ -17,12 +17,6 @@ class TasksController {
 
     const userId = Number(request.user?.id);
 
-    if (!userId) {
-      return response
-        .status(401)
-        .json({ message: "Invalid authenticated user" });
-    }
-
     const task = await prisma.tasks.create({
       data: {
         title: title,
@@ -34,6 +28,7 @@ class TasksController {
     });
     return response.status(201).json();
   }
+
 
   async index(request: Request, response: Response) {
     const userRole = request.user?.role;
