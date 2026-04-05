@@ -23,7 +23,7 @@ class UserController {
       throw new AppError("This email has already been registered.");
     }
 
-    await prisma.user.create({
+   const user =  await prisma.user.create({
       data: {
         name: name,
         email: email,
@@ -31,7 +31,7 @@ class UserController {
       },
     });
 
-    return response.status(201).json();
+    return response.status(201).json(user);
   }
 
   async index(request: Request, response: Response) {
