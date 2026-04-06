@@ -55,7 +55,9 @@ npm run test:dev
 
 ## Deploy
 
-O projeto ainda nao tem uma URL publica de deploy cadastrada neste repositório.
+URL publica da API em producao:
+
+https://gerenciador-de-tarefas-api-jx42.onrender.com
 
 ## Endpoints
 
