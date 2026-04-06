@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "engines": {
-    "node": ">=20"
+    "node": ">=20 <23"
   },
   "scripts": {
     "dev": "node --env-file=.env --import tsx --watch src/server.ts",
     "test:dev": "set NODE_OPTIONS=--experimental-vm-modules && npx jest --watchAll --runInBand",
-    "build": "tsup src --format esm --out-dir build",
+    "build": "prisma generate && tsup src --format esm --out-dir build",
     "start": "node --env-file=.env build/server.js"
   },
   "author": "Roberto Kennedy",
