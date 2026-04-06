@@ -9,7 +9,7 @@
     "dev": "node --env-file=.env --import tsx --watch src/server.ts",
     "test:dev": "set NODE_OPTIONS=--experimental-vm-modules && npx jest --watchAll --runInBand",
     "build": "prisma generate && tsup src --format esm --out-dir build",
-    "start": "node --env-file=.env build/server.js"
+    "start": "node build/server.js"
   },
   "author": "Roberto Kennedy",
   "license": "ISC",
